@@ -43,12 +43,15 @@ const TodosController = {
             next(error)
         }
     },
-    createTodos: (req, res, next) => {
+    createTodos: async (req, res, next) => {
+        // assume its schema checked in middleware
         try {
             const data = req.body;
-            const dbData = TodosDbFunction.getTodos()
+            const dbData = await TodosDbFunction.getTodos()
             dbData.push(data)
             TodosDbFunction.saveTodos(dbData)
+            setStringValue(`todo:data`, null)
+            setStringValue(`todo:${data.id}`, data)
             return res.status(201).json({ status: 201, msg: "Todo created successfully" })
         } catch (error) {
             next(error)

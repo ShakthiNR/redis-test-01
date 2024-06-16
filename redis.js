@@ -5,7 +5,16 @@ let client;
 const initRedisClient = async () => {
     if (!client) {
         client = createClient(); // 6379 - default port
-        client.on('error', err => console.log('Redis Client Error', err))
+        client.on('error', (err) => {
+            console.log('Redis connection error', err)
+            throw err;
+        })
+        client.on('connect', function () {
+            console.log("Redis connected sucessfully!!!");
+        });
+        client.on("end", function (err) {
+            console.log("Redis connection end " + err);
+        });
     }
 
     try {
@@ -35,5 +44,14 @@ const setStringValue = async (key, value) => {
     }
 }
 
+const disconnect = async () => {
+    try {
+        await client.disconnect();
+    } catch (error) {
+        console.log("Error occured in disconnecting redis")
+    }
+}
 
-export { getStringValue, setStringValue, initRedisClient }
+const getConnectedClient = () => client;
+
+export { getStringValue, setStringValue, initRedisClient, disconnect, getConnectedClient }
