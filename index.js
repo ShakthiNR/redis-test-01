@@ -1,5 +1,7 @@
 import express from "express"
 import { todosRouter } from "./routes/index.js"
+import { initRedisClient } from "./redis.js"
+
 const PORT = 5000
 const app = express()
 
@@ -19,6 +21,15 @@ app.use((error, req, res, next) => {
         return res.status(500).json({ msg: "Internal server error" })
 })
 
-app.listen(PORT, () => {
-    console.log("Server connected in port ", PORT)
+
+const dataSourceConnection = async () =>{ 
+    await initRedisClient()
+}
+
+dataSourceConnection().then(()=>{
+    app.listen(PORT, () => {
+        console.log("Server connected in port ", PORT)
+    })
+}).catch(error => {
+    console.log("Error ", error);
 })

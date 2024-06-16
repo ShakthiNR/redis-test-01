@@ -5,7 +5,8 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const TodosDbFunction = {
-    getTodos: () => {
+    getTodos: async () => {
+        await new Promise(r => setTimeout(r, 2000)); /// wait time
         const data = fs.readFileSync(path.resolve(__dirname,"../utils/data.json"))
         return JSON.parse(data)
     },
